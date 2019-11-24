@@ -7,8 +7,12 @@ Future<void> get_info (BuildContext context) async {
 
   String table_name = globals.table_name;
 
-  var databasesPath = await getDatabasesPath();
+  var databasesPath = await getDatabasesPath(); // 獲取databese路徑
   String path = Path.join(databasesPath, 'storage.db');
+
+  // 尋找資料庫 "storage.db/table_name" 是否存在
+  // 如果沒有就創建一個
+  // name: 用戶名
   Database database = await openDatabase(
       path, version: 1,
       onCreate: (Database db, int version) async {
@@ -17,21 +21,24 @@ Future<void> get_info (BuildContext context) async {
       }
   );
 
+// 刪除資料庫 (測試用)
 //  await database.rawDelete('DELETE FROM $table_name');
 
+  // 把資料庫的全部資料抓出來 (反正也只會有一個)
   List<Map> row = await database.rawQuery(
       "SELECT * FROM $table_name");
   if (row.length == 0) {
-    globals.name = "";
+    globals.name = ""; // 如果資料庫是空的 or 用戶名是空的
   } else {
-    globals.name = row[0]['name'];
+    globals.name = row[0]['name']; // 直接取出名字
   }
 
 //    print(name);
 
+  // 名字是空的就是第一次進入
   bool first_time = (globals.name != "") ? false : true;
 
-
+  // 如果是第一次，要好好對待人家哦<3~
   while (first_time) {
     final input_controller = TextEditingController();
     return showDialog<void>(
@@ -41,10 +48,15 @@ Future<void> get_info (BuildContext context) async {
           return Container(
               height: 300,
               width: 200,
+
+
+              // 跳出打名字的視窗
               child: AlertDialog(
                   title: Text("input your name"),
                   content: Column(
                     children: <Widget>[
+
+                      // 輸入框
                       new Expanded(
                         child: new TextField(
                             controller: input_controller,
@@ -66,26 +78,37 @@ Future<void> get_info (BuildContext context) async {
                         height: 75,
                         width: 275,
                         padding: new EdgeInsets.all(5),
+
+                        // 這是按鈕
                         child: RaisedButton(
                           color: Colors.red.shade600,
                           onPressed: () async {
                             String input_name;
+
+                            // 從輸入格取出String
                             input_name = input_controller.text;
 //                              print(input_name);
+
+                            // 如果輸入的是空白的，就繼續留著視窗不關
+                            // 如果有輸入東西，就把他就把他儲存在storage.db/table_name裡面
                             if (input_name != "") {
                               first_time = false;
                               globals.name = input_name;
                               await database.transaction((txn) async {
+                                // 儲存資料
                                 await txn.rawInsert(
                                     'INSERT INTO $table_name(name) '
                                         'VALUES("' + globals.name + '")'
                                 );
                                 print("inserted " + globals.name);
                               });
-                              Navigator.of(context).pop();
+                              // 把輸入視窗從螢幕顯示拿掉
+                              Navigator.of(context).pop(); // pop(): 拿掉陣列最上層
 
                             }
                           },
+
+                          // 按鈕字
                           child: Text(
                             "START",
                             textAlign: TextAlign.center,
