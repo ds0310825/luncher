@@ -125,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
 
           mainAxisAlignment: MainAxisAlignment.center,
+          
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
@@ -141,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.only(
                   left: 25,right: 25,top: 0,bottom: 12.5
