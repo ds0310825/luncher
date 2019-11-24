@@ -150,12 +150,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 225,
                 child: RaisedButton.icon(
                     onPressed: () {
-
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Create_order_page()
+                          )
+                      );
                     },
                     icon: Icon(Icons.view_list, size: 70,),
                     color: Colors.orange,
                     label: Text(
-                      '創立訂單',
+                      '管理訂單',
                       style: TextStyle(
                           fontSize: 50
                       ),
@@ -194,6 +200,38 @@ class _MyHomePageState extends State<MyHomePage> {
 //        tooltip: 'Increment',
 //        child: Icon(Icons.add),
 //      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class Create_order_page extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('管理訂單'),
+      ),
+      body: Container(
+        width: 500,
+        height: 1000,
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Container(
+              height: 160.0,
+              color: Colors.red,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          
+        },
+        child: Icon(
+          Icons.add_circle_outline,
+          color: Colors.white,),
+      ),
     );
   }
 }
