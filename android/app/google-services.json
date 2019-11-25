@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "59901795204",
+    "firebase_url": "https://luncher-a28f6.firebaseio.com",
+    "project_id": "luncher-a28f6",
+    "storage_bucket": "luncher-a28f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59901795204:android:7fde1edfc9eb3aeac19bd1",
+        "android_client_info": {
+          "package_name": "com.astudentstestingapp.luncher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "59901795204-tb1seqbeofopu2kh65ndr01tm93udv9q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlMxmZav5BR_G7xyNjDkgj-w-R1iotr0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "59901795204-tb1seqbeofopu2kh65ndr01tm93udv9q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
