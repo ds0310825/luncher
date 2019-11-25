@@ -22,7 +22,7 @@ void getData() {
   print(data);
 }
 
-void createOrder(String orderName, List<Map> menu, String passWord) async {
+void createOrder(String orderName, String menuName, String passWord) async {
 
   /*******結構*******
    * 在Firebase上
@@ -47,7 +47,7 @@ void createOrder(String orderName, List<Map> menu, String passWord) async {
       .document("info")
       .setData({
         'passWord': passWord,
-        'menu': 'test'
+        'menuName': menuName,
       }
   );
 }
@@ -68,6 +68,20 @@ void createMenu (String shopName, List<Map> menuInfos) {
   * 這是菜單的儲存結構
   *
   * ****************/
+
+  /****
+  * @Parameter:
+  *   shopName: 店家名
+  *   menuInfos: {
+  *       menuInfo: {
+  *           name: 餐點名 String
+  *           value: 價格  Int
+  *       }
+  *       menuInfo,
+  *       menuInfo,
+  *   }
+  *
+  ****/
 
 
   menuInfos.forEach(

@@ -250,7 +250,7 @@ class Create_order_page extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           firebase.getData();
-          firebase.createOrder("Menus", "123456789");
+//          firebase.createOrder("Menus", "123456789");
         },
         child: Icon(
           Icons.add_circle_outline,
