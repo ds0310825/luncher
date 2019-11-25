@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as Path;
 import 'globals.dart' as globals;
 
-Future<void> get_info (BuildContext context) async {
+Future<void> showWindow (BuildContext context) async {
 
   String table_name = globals.table_name;
 

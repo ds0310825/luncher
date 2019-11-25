@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as Path;
 import 'package:luncher/sqlite_controllr.dart' as sqlite;
+import 'package:luncher/firebase_controller.dart' as firebase;
 import 'globals.dart' as globals;
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 void main(){
   runApp(MyApp());
 }
+
+Widget stream_build(BuildContext context) {
+  return new StreamBuilder(
+      stream: Firestore.instance.collection('Users')
+          .document('for_test')
+          .snapshots(),
+
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return new Text("Loading");
+        }
+        var userDocument = snapshot.data;
+        return new Text(userDocument["name"]);
+      }
+  );
+}
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -79,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    sqlite.get_info(context);
+    sqlite.showWindow(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -152,6 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 225,
                 child: RaisedButton.icon(
                     onPressed: () {
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -223,12 +243,14 @@ class Create_order_page extends StatelessWidget {
               height: 160.0,
               color: Colors.red,
             ),
+            stream_build(context),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
+          firebase.getData();
+          firebase.createOrder("Menus", "123456789");
         },
         child: Icon(
           Icons.add_circle_outline,
