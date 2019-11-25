@@ -30,16 +30,22 @@ void createOrder(String orderName, String menuName, String passWord) async {
    *        \(訂單名)
    *        \走~柳川館--
    *                  \passWord (密碼): "6969669"
-   *                  \menu--
-   *                       \(自動產生ID)--
-   *                                    \name: "肉燥飯"
-   *                                    \price: 45 (number)
+   *                  \柳川館 (菜單名) 每次使用就用名字爬菜單出來
    *        \維琪媽媽不見了
    *        \氪金完沒錢了，吃吉利
    *
    * 這是訂單的儲存結構
    *
    * ****************/
+
+
+   /****
+   * @Parameter:
+   *   orderName: 訂單名
+   *   menuName: 菜單名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
+   *   passWord: 密碼
+   *
+   ****/
 
   await databaseReference.collection(orderName)
       .document("柳川館")
@@ -75,7 +81,7 @@ void createMenu (String shopName, List<Map> menuInfos) {
   *   menuInfos: {
   *       menuInfo: {
   *           name: 餐點名 String
-  *           value: 價格  Int
+  *           price: 價格  Int
   *       }
   *       menuInfo,
   *       menuInfo,
