@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-final databaseReference = Firestore.instance;
+final database_reference = Firestore.instance;
 
-void getData() {
+void get_data() {
   List<DocumentSnapshot> data = new List<DocumentSnapshot>();
 
-  databaseReference
+  database_reference
       .collection("Users")
       .getDocuments()
       .then((QuerySnapshot snapshot) {
@@ -22,14 +22,14 @@ void getData() {
   print(data);
 }
 
-void createOrder(String orderName, String menuName, String passWord) async {
+void createOrder(String order_name, String menu_name, String password) async {
 
   /*******結構*******
    * 在Firebase上
    * Orders--
    *        \(訂單名)
    *        \走~柳川館--
-   *                  \passWord (密碼): "6969669"
+   *                  \password (密碼): "6969669"
    *                  \柳川館 (菜單名) 每次使用就用名字爬菜單出來
    *        \維琪媽媽不見了
    *        \氪金完沒錢了，吃吉利
@@ -41,24 +41,24 @@ void createOrder(String orderName, String menuName, String passWord) async {
 
    /****
    * @Parameter:
-   *   orderName: 訂單名
-   *   menuName: 菜單名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
-   *   passWord: 密碼
+   *   order_name: 訂單名
+   *   menu_name: 菜單名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
+   *   password: 密碼
    *
    ****/
 
-  await databaseReference.collection(orderName)
-      .document("柳川館")
+  await database_reference.collection(order_name)
+      .document()
       .collection("肉燥飯")
       .document("info")
       .setData({
-        'passWord': passWord,
-        'menuName': menuName,
+        'password': password,
+        'menu_name': menu_name,
       }
   );
 }
 
-void createMenu (String shopName, List<Map> menuInfos) {
+void createMenu (String shop_name, List<Map> menu_infos) {
 
   /*******結構*******
   * 在Firebase上
@@ -77,28 +77,28 @@ void createMenu (String shopName, List<Map> menuInfos) {
 
   /****
   * @Parameter:
-  *   shopName: 店家名
-  *   menuInfos: {
-  *       menuInfo: {
+  *   shop_name: 店家名
+  *   menu_infos: {
+  *       menu_info: {
   *           name: 餐點名 String
   *           price: 價格  Int
   *       }
-  *       menuInfo,
-  *       menuInfo,
+  *       menu_info,
+  *       menu_info,
   *   }
   *
   ****/
 
 
-  menuInfos.forEach(
-    (menuInfo) async {
-      await databaseReference.collection("Menus")
-          .document(shopName)
-          .collection(menuInfo['name'])
+  menu_infos.forEach(
+    (menu_info) async {
+      await database_reference.collection("Menus")
+          .document(shop_name)
+          .collection(menu_info['name'])
           .document("info")
           .setData(
           {
-            'price': menuInfo['price']
+            'price': menu_info['price']
           }
       );
     }

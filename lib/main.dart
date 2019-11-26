@@ -3,29 +3,12 @@ import 'package:luncher/sqlite_controllr.dart' as sqlite;
 import 'package:luncher/firebase_controller.dart' as firebase;
 import 'globals.dart' as globals;
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:luncher/manage_order.dart' as ManageOrder;
 
 
 void main(){
   runApp(MyApp());
 }
-
-Widget stream_build(BuildContext context) {
-  return new StreamBuilder(
-      stream: Firestore.instance.collection('Users')
-          .document('for_test')
-          .snapshots(),
-
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return new Text("Loading");
-        }
-        var userDocument = snapshot.data;
-        return new Text(userDocument["name"]);
-      }
-  );
-}
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -176,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  Create_order_page()
+                                  create_manage_order_page()
                           )
                       );
                     },
@@ -226,36 +209,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class Create_order_page extends StatelessWidget {
+class create_manage_order_page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('管理訂單'),
-      ),
-      body: Container(
-        width: 500,
-        height: 1000,
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            Container(
-              height: 160.0,
-              color: Colors.red,
-            ),
-            stream_build(context),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          firebase.getData();
-//          firebase.createOrder("Menus", "123456789");
-        },
-        child: Icon(
-          Icons.add_circle_outline,
-          color: Colors.white,),
-      ),
-    );
+    return ManageOrder.manage_order_page(context);
   }
 }
