@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
 
 final database_reference = Firestore.instance;
 
@@ -23,27 +24,30 @@ void testing__get_data() {
   print(data);
 }
 
-List<String> get_menus_name () {
-  List<String> menus_name;
+void get_menus_name () {
+//  List<String> _menus_name = [];
   database_reference.collection('Menus')
-      .getDocuments()
-      .then(
-          (QuerySnapshot snapshot) {
-              snapshot.documents.forEach(
-                  (f) {
-                    menus_name.add(f.documentID);
-                    print(f.documentID);
-                  }
-              );
+    .getDocuments()
+    .then(
+      (QuerySnapshot snapshot) {
+      globals.menus_name.clear();
+
+      snapshot.documents.forEach(
+          (f) {
+            globals.menus_name.add(f.documentID);
+//            print(f.documentID);
+//            print(globals.menus_name);
           }
-      );
-  return menus_name;
+        );
+      }
+    );
+//  print(globals.menus_name);
 }
 
-void get_menu_item (String shop_name) {
+void get_menu_item (String menu_name) {
   database_reference
     .collection('Menus')
-    .document(shop_name)
+    .document(menu_name)
     .snapshots()
     .forEach(
       (f) {
@@ -53,7 +57,21 @@ void get_menu_item (String shop_name) {
     );
 }
 
-void createOrder(String order_name, String shop_name, String password) async {
+void get_exist_order () {
+  database_reference.collection('Orders')
+    .getDocuments().then((QuerySnapshot snapshot) {
+      globals.exist_orders.clear();
+
+      snapshot.documents.forEach((f) {
+//        print(f.documentID);
+        globals.exist_orders.add(f.documentID);
+//        print(globals.exist_orders);
+      });
+    }
+  );
+}
+
+void create_order(String order_name, String menu_name, String password) async {
 
   /*******結構*******
    * 在Firebase上
@@ -73,23 +91,21 @@ void createOrder(String order_name, String shop_name, String password) async {
    /****
    * @Parameter:
    *   order_name: 訂單名
-   *   shop_name: 店家名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
+   *   menu_name: 店家名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
    *   password: 密碼
    *
    ****/
 
-  await database_reference.collection(order_name)
-      .document()
-      .collection("肉燥飯")
-      .document("info")
-      .setData({
-        'password': password,
-        'menu_name': shop_name,
-      }
+  await database_reference.collection('Orders')
+    .document(order_name)
+    .setData({
+      "menu": menu_name,
+      "password": password
+    }
   );
 }
 
-void createMenu (String shop_name, List<Map> menu_infos) {
+void create_menu (String shop_name, List<Map> menu_infos) {
 
   /*******結構*******
   * 在Firebase上

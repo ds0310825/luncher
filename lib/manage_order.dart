@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
 import 'package:luncher/firebase_controller.dart' as firebase;
 
 Widget manage_order_page (BuildContext context) {
@@ -33,7 +34,7 @@ Widget manage_order_page (BuildContext context) {
       child: Icon(
         Icons.add,
         color: Colors.white,
-        size: 20,),
+        size: 40,),
     ),
   );
 }
@@ -47,45 +48,122 @@ class set_order_page extends StatefulWidget {
 
 }
 
+String selected_menu = "";
+String order_name_input_error = "訂單名";
+String password_input_error = "密碼";
+String menu_input_error = "選擇";
 
+var order_name_color = Colors.grey.shade500;
+var password_color = Colors.grey.shade500;
+var menu_color = Colors.purple;
 
 class _set_order_page_state extends State<StatefulWidget> {
 
   final _password_controller = new TextEditingController();
   final _order_name_controller = new TextEditingController();
-  String menu_name = "選擇";
-  String _order_name_input_error = "訂單名";
-  var _order_name_color = Colors.grey.shade500;
-  String _password_input_error = "密碼";
-  var _password_color = Colors.grey.shade500;
 
   void _order_name_empty () {
     setState(() {
-      _order_name_input_error = "訂單名不能為空";
-      _order_name_color = Colors.red.shade500;
+      order_name_input_error = "訂單名不能為空";
+      order_name_color = Colors.red.shade500;
     });
   }
   void _order_name_typed () {
     setState(() {
-      _order_name_input_error = "訂單名";
-      _order_name_color = Colors.grey.shade500;
+      order_name_input_error = "訂單名";
+      order_name_color = Colors.grey.shade500;
     });
   }
   void _password_empty () {
     setState(() {
-      _password_input_error = "密碼不能為空";
-      _password_color = Colors.red.shade500;
+      password_input_error = "密碼不能為空";
+      password_color = Colors.red.shade500;
     });
   }
-  void _password_typed() {
+  void _password_typed () {
     setState(() {
-      _password_input_error = "密碼";
-      _password_color = Colors.grey.shade500;
+      password_input_error = "密碼";
+      password_color = Colors.grey.shade500;
     });
+  }
+  void _order_exist () {
+    setState(() {
+      order_name_input_error = "訂單名已存在";
+      order_name_color = Colors.red.shade500;
+    });
+  }
+  void _order_not_exist () {
+    setState(() {
+      order_name_input_error = "訂單名";
+      order_name_color= Colors.grey.shade500;
+    });
+  }
+  void _menu_empty () {
+    setState(() {
+      menu_input_error = "菜單不能為空";
+      password_color = Colors.red.shade500;
+    });
+  }
+  void _menu_typed () {
+    setState(() {
+      menu_input_error = selected_menu;
+      password_color = Colors.grey.shade500;
+    });
+  }
+
+  void _show_menu () {
+    setState(() {
+      menu_input_error = selected_menu;
+    });
+  }
+
+  void _create_order_check () {
+
+    if(_order_name_controller.text != ""
+        &&
+        _password_controller.text != ""
+        &&
+        globals.exist_orders.indexOf(_order_name_controller.text) != 1
+        &&
+        selected_menu != ""
+      ){
+      firebase.create_order(
+          _order_name_controller.text,
+          selected_menu,
+          _password_controller.text);
+      Navigator.pop(context);
+    }
+
+    if(_order_name_controller.text == ""){
+      _order_name_empty();
+    }else{
+      _order_name_typed();
+    }
+
+    if(_password_controller.text == ""){
+      _password_empty();
+    }else{
+      _password_typed();
+    }
+
+    if(globals.exist_orders.indexOf(_order_name_controller.text) != 1 ) {
+      _order_not_exist();
+    }else{
+      _order_exist();
+    }
+
+    if(selected_menu != ""){
+      _menu_typed();
+    }else{
+      _menu_empty();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    firebase.get_menus_name();
+    firebase.get_exist_order();
 
     return new Scaffold(
         appBar: AppBar(
@@ -119,9 +197,9 @@ class _set_order_page_state extends State<StatefulWidget> {
                                 border: InputBorder.none,
                                 filled: true,
                                 contentPadding: new EdgeInsets.all(5),
-                                labelText: _order_name_input_error,
+                                labelText: order_name_input_error,
                                 labelStyle: new TextStyle(
-                                    color: _order_name_color,
+                                    color: order_name_color,
                                     fontSize: 17),
                               ),
                               autofocus: true,
@@ -145,20 +223,19 @@ class _set_order_page_state extends State<StatefulWidget> {
                           padding: EdgeInsets.only(left: 30),
                           child: new RaisedButton(
                             child: Text(
-                              menu_name,
+                              menu_input_error,
                               style: TextStyle(
-                                color: Colors.grey.shade500,
+                                color: menu_color,
                                 fontSize: 25,
                               ),
                             ),
                             onPressed: () {
-                              firebase.get_menus_name();
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) => choose_menu_page()
-//                                )
-//                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => choose_menu_page()
+                                )
+                              );
                             },
                           ),
                         )
@@ -188,9 +265,9 @@ class _set_order_page_state extends State<StatefulWidget> {
                                   border: InputBorder.none,
                                   filled: true,
                                   contentPadding: new EdgeInsets.all(5),
-                                  labelText: _password_input_error,
+                                  labelText: password_input_error,
                                   labelStyle: new TextStyle(
-                                      color: _password_color,
+                                      color: password_color,
                                       fontSize: 17),
 
                                 ),
@@ -205,29 +282,7 @@ class _set_order_page_state extends State<StatefulWidget> {
                     child: Center(
                       child: RaisedButton(
                         onPressed: (){
-                          if(_order_name_controller.text != ""
-                              &&
-                              _password_controller.text != ""){
-
-                            print("selecting menu");
-//                            firebase.get_menus_name("test");
-//                            Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) => choose_menu_page()
-//                                )
-//                            );
-                          }
-                          if(_order_name_controller.text == ""){
-                            _order_name_empty();
-                          }else{
-                            _order_name_typed();
-                          }
-                          if(_password_controller.text == ""){
-                            _password_empty();
-                          }else{
-                            _password_typed();
-                          }
+                          _create_order_check();
                         },
                         child: Text(
                           "創建",
@@ -249,39 +304,65 @@ class _set_order_page_state extends State<StatefulWidget> {
 
 
 class choose_menu_page extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
 
     return new Scaffold(
-        appBar: AppBar(
-          title: Text('選擇菜單'),
+      appBar: AppBar(
+        title: Text('選擇菜單'),
+      ),
+      body: Center(
+        child: Container(
+          width: 500,
+          height: 1000,
+          child: build_list(context),
         ),
-        body: Center(
-          child: Container(
-            width: 500,
-            height: 1000,
-            child: stream_build(context),
-          ),
-        )
-
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          firebase.create_menu("test", [{}]);
+        },
+        child: Icon(Icons.add, size: 40,),
+      ),
     );
   }
 }
 
 
-Widget stream_build(BuildContext context) {
-  return new StreamBuilder(
-      stream: Firestore.instance.collection('Menus').document("柳川館")
-        .snapshots()
-      ,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return new Text("Loading...");
-        }
+Widget build_list(BuildContext context) {
 
-        var userDocument = snapshot.data;
-        return new Text(userDocument["name"]);
-      }
+  return ListView.builder(
+    itemCount: globals.menus_name.length,
+    itemBuilder: (context, index) {
+      print(globals.menus_name[index]);
+      return selected_row(context, index);
+    },
+  );
+}
+
+Widget selected_row (BuildContext context, int index) {
+  return SizedBox(
+    width: double.infinity,
+    height: 70,
+    child: new Padding(
+      padding: EdgeInsets.only(
+          left: 10, right: 10, top: 10),
+      child: RaisedButton(
+        child: Text(
+          globals.menus_name[index],
+          style: TextStyle(fontSize: 30),
+        ),
+        onPressed: () {
+          selected_menu = globals.menus_name[index];
+          menu_input_error = globals.menus_name[index];
+
+          print(selected_menu);
+          Navigator.pop(context);
+        },
+
+      ),
+    )
   );
 }
 

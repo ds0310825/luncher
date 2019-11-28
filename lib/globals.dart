@@ -9,3 +9,7 @@ library globals;
 
 String name = ""; // 用戶名
 String table_name = "user_info"; // storage.db 表格的名字
+List<String> menus_name = [];
+List<String> exist_orders = [];
+
+
