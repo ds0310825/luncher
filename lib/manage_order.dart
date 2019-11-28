@@ -152,12 +152,13 @@ class _set_order_page_state extends State<StatefulWidget> {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => choose_menu_page()
-                                )
-                              );
+                              firebase.get_menus_name();
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) => choose_menu_page()
+//                                )
+//                              );
                             },
                           ),
                         )
@@ -209,6 +210,7 @@ class _set_order_page_state extends State<StatefulWidget> {
                               _password_controller.text != ""){
 
                             print("selecting menu");
+//                            firebase.get_menus_name("test");
 //                            Navigator.push(
 //                                context,
 //                                MaterialPageRoute(
@@ -269,7 +271,7 @@ class choose_menu_page extends StatelessWidget {
 
 Widget stream_build(BuildContext context) {
   return new StreamBuilder(
-      stream: Firestore.instance.collection('Menus')
+      stream: Firestore.instance.collection('Menus').document("柳川館")
         .snapshots()
       ,
       builder: (context, snapshot) {

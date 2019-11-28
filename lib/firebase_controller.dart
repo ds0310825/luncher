@@ -5,24 +5,55 @@ import 'package:flutter/material.dart';
 
 final database_reference = Firestore.instance;
 
-void get_data() {
+void testing__get_data() {
   List<DocumentSnapshot> data = new List<DocumentSnapshot>();
 
   database_reference
-      .collection("Users")
-      .getDocuments()
-      .then((QuerySnapshot snapshot) {
-    snapshot.documents.forEach(
-      (f) {
-        print('${f.data}}');
-        data.add(f);
-      }
-    );
-  });
+    .collection("Users")
+    .getDocuments()
+    .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach(
+        (f) {
+          print('${f.data}');
+          data.add(f);
+        }
+      );
+    }
+  );
   print(data);
 }
 
-void createOrder(String order_name, String menu_name, String password) async {
+List<String> get_menus_name () {
+  List<String> menus_name;
+  database_reference.collection('Menus')
+      .getDocuments()
+      .then(
+          (QuerySnapshot snapshot) {
+              snapshot.documents.forEach(
+                  (f) {
+                    menus_name.add(f.documentID);
+                    print(f.documentID);
+                  }
+              );
+          }
+      );
+  return menus_name;
+}
+
+void get_menu_item (String shop_name) {
+  database_reference
+    .collection('Menus')
+    .document(shop_name)
+    .snapshots()
+    .forEach(
+      (f) {
+        print(f.data);
+        print(f.data.values.toList()[0]['price']);
+      }
+    );
+}
+
+void createOrder(String order_name, String shop_name, String password) async {
 
   /*******結構*******
    * 在Firebase上
@@ -42,7 +73,7 @@ void createOrder(String order_name, String menu_name, String password) async {
    /****
    * @Parameter:
    *   order_name: 訂單名
-   *   menu_name: 菜單名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
+   *   shop_name: 店家名 (如果把菜單整個加進去，每日免費流量可能會爆炸...吧?)
    *   password: 密碼
    *
    ****/
@@ -53,7 +84,7 @@ void createOrder(String order_name, String menu_name, String password) async {
       .document("info")
       .setData({
         'password': password,
-        'menu_name': menu_name,
+        'menu_name': shop_name,
       }
   );
 }
