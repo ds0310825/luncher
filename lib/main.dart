@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _show_name() {
     setState(() {
-      name = globals.name;
+      name = globals.user_name;
       print(name);
     });
   }
@@ -212,6 +212,6 @@ class _MyHomePageState extends State<MyHomePage> {
 class create_manage_order_page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ManageOrder.manage_order_page(context);
+    return ManageOrder.manage_orders_page(context);
   }
 }

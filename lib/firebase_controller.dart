@@ -30,11 +30,11 @@ void get_menus_name () {
     .getDocuments()
     .then(
       (QuerySnapshot snapshot) {
-      globals.menus_name.clear();
+      globals.menu_names.clear();
 
       snapshot.documents.forEach(
           (f) {
-            globals.menus_name.add(f.documentID);
+            globals.menu_names.add(f.documentID);
 //            print(f.documentID);
 //            print(globals.menus_name);
           }
@@ -67,11 +67,14 @@ void get_exist_order () {
         globals.exist_orders.add(f.documentID);
 //        print(globals.exist_orders);
       });
-    }
+
+      globals.order_counter = globals.exist_orders.length;
+
+  }
   );
 }
 
-void create_order(String order_name, String menu_name, String password) async {
+void create_order(String order_name, String menu_name, String creator_name, String password) async {
 
   /*******結構*******
    * 在Firebase上
@@ -100,7 +103,9 @@ void create_order(String order_name, String menu_name, String password) async {
     .document(order_name)
     .setData({
       "menu": menu_name,
-      "password": password
+      "password": password,
+      "creator_name": creator_name,
+      "state": true
     }
   );
 }

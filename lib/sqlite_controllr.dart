@@ -5,7 +5,7 @@ import 'globals.dart' as globals;
 
 Future<void> showWindow (BuildContext context) async {
 
-  String table_name = globals.table_name;
+  String table_name = globals.sqlite_table_name;
 
   var databasesPath = await getDatabasesPath(); // 獲取databese路徑
   String path = Path.join(databasesPath, 'storage.db');
@@ -28,15 +28,15 @@ Future<void> showWindow (BuildContext context) async {
   List<Map> row = await database.rawQuery(
       "SELECT * FROM $table_name");
   if (row.length == 0) {
-    globals.name = ""; // 如果資料庫是空的 or 用戶名是空的
+    globals.user_name = ""; // 如果資料庫是空的 or 用戶名是空的
   } else {
-    globals.name = row[0]['name']; // 直接取出名字
+    globals.user_name = row[0]['name']; // 直接取出名字
   }
 
 //    print(name);
 
   // 名字是空的就是第一次進入
-  bool first_time = (globals.name != "") ? false : true;
+  bool first_time = (globals.user_name != "") ? false : true;
 
   // 如果是第一次，要好好對待人家哦<3~
   while (first_time) {
@@ -93,14 +93,14 @@ Future<void> showWindow (BuildContext context) async {
                             // 如果有輸入東西，就把他就把他儲存在storage.db/table_name裡面
                             if (input_name != "") {
                               first_time = false;
-                              globals.name = input_name;
+                              globals.user_name = input_name;
                               await database.transaction((txn) async {
                                 // 儲存資料
                                 await txn.rawInsert(
                                     'INSERT INTO $table_name(name) '
-                                        'VALUES("' + globals.name + '")'
+                                        'VALUES("' + globals.user_name + '")'
                                 );
-                                print("inserted " + globals.name);
+                                print("inserted " + globals.user_name);
                               });
                               // 把輸入視窗從螢幕顯示拿掉
                               Navigator.of(context).pop(); // pop(): 拿掉陣列最上層

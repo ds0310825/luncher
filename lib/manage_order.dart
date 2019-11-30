@@ -1,10 +1,16 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
 import 'package:luncher/firebase_controller.dart' as firebase;
 
-Widget manage_order_page (BuildContext context) {
+Widget manage_orders_page (BuildContext context) {
+
+  firebase.get_menus_name();
+  firebase.get_exist_order();
+
   return new Scaffold(
     appBar: AppBar(
       title: Text('管理訂單'),
@@ -12,15 +18,7 @@ Widget manage_order_page (BuildContext context) {
     body: Container(
       width: 500,
       height: 1000,
-      child: ListView(
-        scrollDirection: Axis.vertical,
-        children: <Widget>[
-          Container(
-            height: 160.0,
-            color: Colors.red,
-          ),
-        ],
-      ),
+      child: selected_order_list()
     ),
     floatingActionButton: FloatingActionButton(
       onPressed: () {
@@ -39,10 +37,98 @@ Widget manage_order_page (BuildContext context) {
   );
 }
 
+Widget selected_order_list () {
+  return ListView.builder(
+    itemCount: globals.order_counter,
+    itemBuilder: (context, index) {
+      return selected_menu_row(context, index);
+    },
+  );
+}
+
+String selected_order;
+
+Widget selected_order_row (BuildContext context, int index) {
+  return SizedBox(
+    width: double.infinity,
+    height: 150,
+    child: Padding(
+      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: RaisedButton(
+        onPressed: () {
+          selected_order = globals.exist_orders[index];
+        },
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              child: Text(
+                "state",
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              flex: 1,
+            ),
+            Flexible(
+              child: Text(
+                globals.exist_orders[index],
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              flex: 2,
+            ),
+          ],
+        ),
+      )
+    ),
+  );
+}
+
+class manage_order_page extends StatefulWidget {
+
+  @override
+  _manage_order_page_state createState () {
+    return _manage_order_page_state();
+  }
+}
+
+class _manage_order_page_state extends State<manage_order_page> {
+  @override
+  Widget build (BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(selected_order),
+      ),
+      body: Container(
+        child: ,
+      ),
+    );
+  }
+}
+
+Widget stream_build(BuildContext context) {
+  return new StreamBuilder(
+      stream: Firestore.instance.collection('Users')
+          .document('for_test')
+          .snapshots(),
+
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return new Text("Loading");
+        }
+        var userDocument = snapshot.data;
+        return new Text(userDocument["name"]);
+      }
+  );
+}
+
 class set_order_page extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() {
+  State<StatefulWidget> createState () {
     return _set_order_page_state();
   }
 
@@ -111,26 +197,33 @@ class _set_order_page_state extends State<StatefulWidget> {
     });
   }
 
-  void _show_menu () {
+  void _order_counter_increase () {
     setState(() {
-      menu_input_error = selected_menu;
+      globals.order_counter++;
     });
   }
 
   void _create_order_check () {
 
+    bool is_exist = (globals.exist_orders.indexOf(_order_name_controller.text) == -1) ? false : true;
+
     if(_order_name_controller.text != ""
         &&
         _password_controller.text != ""
         &&
-        globals.exist_orders.indexOf(_order_name_controller.text) != 1
+        !is_exist
         &&
         selected_menu != ""
       ){
+
       firebase.create_order(
           _order_name_controller.text,
           selected_menu,
+          globals.user_name,
           _password_controller.text);
+
+      _order_counter_increase();
+
       Navigator.pop(context);
     }
 
@@ -138,6 +231,14 @@ class _set_order_page_state extends State<StatefulWidget> {
       _order_name_empty();
     }else{
       _order_name_typed();
+
+      if(is_exist) {
+        _order_exist();
+
+      }else{
+        _order_not_exist();
+
+      }
     }
 
     if(_password_controller.text == ""){
@@ -146,16 +247,8 @@ class _set_order_page_state extends State<StatefulWidget> {
       _password_typed();
     }
 
-    if(globals.exist_orders.indexOf(_order_name_controller.text) != 1 ) {
-      _order_not_exist();
-    }else{
-      _order_exist();
-    }
-
-    if(selected_menu != ""){
-      _menu_typed();
-    }else{
-      _menu_empty();
+    if(selected_menu == "") {
+      menu_input_error = selected_menu;
     }
   }
 
@@ -303,7 +396,22 @@ class _set_order_page_state extends State<StatefulWidget> {
 }
 
 
-class choose_menu_page extends StatelessWidget {
+class choose_menu_page extends StatefulWidget {
+//  final Stream stream;
+//  choose_menu_page({this.stream});
+//
+//  static of(BuildContext context, {bool root = false}) => root
+//    ? context.rootAncestorStateOfType(const TypeMatcher<choose_menu_page_state>())
+//    : context.ancestorRenderObjectOfType(const TypeMatcher<choose_menu_page_state>());
+
+
+  @override
+  _choose_menu_page_state createState() {
+    return _choose_menu_page_state();
+  }}
+
+class _choose_menu_page_state extends State<choose_menu_page> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -316,12 +424,12 @@ class choose_menu_page extends StatelessWidget {
         child: Container(
           width: 500,
           height: 1000,
-          child: build_list(context),
+          child: selected_menu_list(context),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          firebase.create_menu("test", [{}]);
+          print('testing');
         },
         child: Icon(Icons.add, size: 40,),
       ),
@@ -330,18 +438,18 @@ class choose_menu_page extends StatelessWidget {
 }
 
 
-Widget build_list(BuildContext context) {
+Widget selected_menu_list(BuildContext context) {
 
   return ListView.builder(
-    itemCount: globals.menus_name.length,
+    itemCount: globals.menu_names.length,
     itemBuilder: (context, index) {
-      print(globals.menus_name[index]);
-      return selected_row(context, index);
+      print(globals.menu_names[index]);
+      return selected_menu_row(context, index);
     },
   );
 }
 
-Widget selected_row (BuildContext context, int index) {
+Widget selected_menu_row (BuildContext context, int index) {
   return SizedBox(
     width: double.infinity,
     height: 70,
@@ -350,12 +458,13 @@ Widget selected_row (BuildContext context, int index) {
           left: 10, right: 10, top: 10),
       child: RaisedButton(
         child: Text(
-          globals.menus_name[index],
+          globals.menu_names[index],
           style: TextStyle(fontSize: 30),
         ),
         onPressed: () {
-          selected_menu = globals.menus_name[index];
-          menu_input_error = globals.menus_name[index];
+
+          selected_menu = globals.menu_names[index];
+          menu_input_error = globals.menu_names[index];
 
           print(selected_menu);
           Navigator.pop(context);
